@@ -134,7 +134,7 @@ public class BarChartRenderer extends BarLineScatterCandleBubbleRenderer {
         BarBuffer buffer = mBarBuffers[index];
         buffer.setPhases(phaseX, phaseY);
         buffer.setDataSet(index);
-        buffer.setInverted(mChart.isInverted(dataSet.getAxisDependency()));
+//        buffer.setInverted(mChart.isInverted(dataSet.getAxisDependency()));
         buffer.setBarWidth(mChart.getBarData().getBarWidth());
 
         buffer.feed(dataSet);
@@ -162,10 +162,10 @@ public class BarChartRenderer extends BarLineScatterCandleBubbleRenderer {
                 mRenderPaint.setColor(dataSet.getColor(j / 4));
             }
 
-//            System.out.println("buffer = " + buffer.buffer[j]);
-//            System.out.println("buffer = " + buffer.buffer[j + 1]);
-//            System.out.println("buffer = " + buffer.buffer[j + 2]);
-//            System.out.println("buffer = " + buffer.buffer[j + 3]);
+            System.out.println("buffer left = " + buffer.buffer[j]);
+            System.out.println("buffer top = " + buffer.buffer[j + 1]);
+            System.out.println("buffer right = " + buffer.buffer[j + 2]);
+            System.out.println("buffer bottom = " + buffer.buffer[j + 3]);
 
             c.drawRect(buffer.buffer[j], buffer.buffer[j + 1], buffer.buffer[j + 2],
                     buffer.buffer[j + 3], mRenderPaint);

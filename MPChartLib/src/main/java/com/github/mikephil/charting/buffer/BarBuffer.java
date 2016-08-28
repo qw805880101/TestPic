@@ -77,6 +77,11 @@ public class BarBuffer extends AbstractBuffer<IBarDataSet> {
                 else
                     bottom *= phaseY;
 
+                System.out.println("left = " +left);
+                System.out.println("top = " + top);
+                System.out.println("right = " + right);
+                System.out.println("bottom = " + bottom);
+
                 addBar(left, top, right, bottom);
 
             } else {

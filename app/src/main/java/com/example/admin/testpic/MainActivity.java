@@ -7,113 +7,146 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 
 import com.github.mikephil.charting.charts.BarChart;
+import com.github.mikephil.charting.components.Legend;
 import com.github.mikephil.charting.components.XAxis;
 import com.github.mikephil.charting.components.YAxis;
 import com.github.mikephil.charting.data.BarData;
 import com.github.mikephil.charting.data.BarDataSet;
 import com.github.mikephil.charting.data.BarEntry;
+import com.github.mikephil.charting.data.Entry;
+import com.github.mikephil.charting.formatter.IAxisValueFormatter;
+import com.github.mikephil.charting.highlight.Highlight;
 import com.github.mikephil.charting.interfaces.datasets.IBarDataSet;
 import com.github.mikephil.charting.interfaces.datasets.IDataSet;
+import com.github.mikephil.charting.listener.OnChartValueSelectedListener;
 import com.github.mikephil.charting.utils.ColorTemplate;
 import com.zhy.autolayout.config.AutoLayoutConifg;
 
 import java.util.ArrayList;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements OnChartValueSelectedListener {
 
-    private BarChart mBarChart;
+    private BarChart mChart;
 
     private Context context;
 
     private int showCount = 10;
+
+    Typeface face;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         AutoLayoutConifg.getInstance().useDeviceSize();
         setContentView(R.layout.histogram);
+        face = Typeface.createFromAsset(getAssets(), "roboto.ttf");
         findy();
 
     }
 
     private void findy() {
-        mBarChart = (BarChart) findViewById(R.id.my);
-        setData(31, 1000);
+        mChart = (BarChart) findViewById(R.id.my);
+        mChart.setOnChartValueSelectedListener(this);
 
-        mBarChart.setDescription("");
+        mChart.setDrawBarShadow(false);
+        mChart.setDrawValueAboveBar(true);
 
-        for (IDataSet set : mBarChart.getData().getDataSets())
-            set.setDrawValues(false);
+        mChart.setDescription("");
 
-        mBarChart.animateY(3000);
+        // if more than 60 entries are displayed in the chart, no values will be
+        // drawn
+//        mChart.setMaxVisibleValueCount(15);
 
-        YAxis mYAxis = mBarChart.getAxisLeft();
+        // scaling can now only be done on x- and y-axis separately
+        mChart.setPinchZoom(false);
 
-        mYAxis.setEnabled(false); //是否启用左边Y轴，如果禁用，关于轴的设置所有属性都将被忽略
+        mChart.setDrawGridBackground(false);
+        // mChart.setDrawYLabels(false);
 
-//        mYAxis.setPosition(YAxis.YAxisLabelPosition.INSIDE_CHART);
+        IAxisValueFormatter xAxisFormatter = new DayAxisValueFormatter(mChart, 30);
 
-//        mYAxis.setZeroLineWidth(10);
-//        mYAxis.setZeroLineColor(getResources().getColor(R.color.color_54657e));
-//        mYAxis.setDrawZeroLine(true);
+        XAxis xAxis = mChart.getXAxis();
+        xAxis.setDrawAxisLine(false);// 是否绘制轴线
+        xAxis.setDrawGridLines(false);//是否和网格轴线
+        xAxis.setPosition(XAxis.XAxisPosition.BOTTOM);
+        xAxis.setTypeface(face); // 设置标签字体
+        xAxis.setDrawGridLines(false);
+        xAxis.setTextSize(18);
+        xAxis.setGranularity(1f); // only intervals of 1 day
+        xAxis.setLabelCount(7);
+        xAxis.setValueFormatter(xAxisFormatter);
 
+        IAxisValueFormatter custom = new MyAxisValueFormatter();
 
-        mBarChart.getAxisRight().setEnabled(false); //是否显示右边Y轴
+        YAxis leftAxis = mChart.getAxisLeft();
+        leftAxis.setTypeface(face);
+        leftAxis.setDrawAxisLine(false);// 是否绘制轴线
+        leftAxis.setDrawGridLines(false);//是否和网格轴线
+        leftAxis.setLabelCount(8, false);
+        leftAxis.setValueFormatter(custom);
+        leftAxis.setPosition(YAxis.YAxisLabelPosition.OUTSIDE_CHART);
+        leftAxis.setSpaceTop(15f);
+        leftAxis.setAxisMinimum(0f); // this replaces setStartAtZero(true)
 
-        mBarChart.setScaleEnabled(false); // 设置缩放
+        YAxis liftAxis = mChart.getAxisLeft();
+        liftAxis.setEnabled(false);
 
-        mBarChart.getLegend().setEnabled(false);  // 显示图标
+        mChart.getLegend().setEnabled(false);  // 显示图标
 
-        mBarChart.setVisibleXRange(0, showCount);// 设置标签范围
+        YAxis rightAxis = mChart.getAxisRight();
+        rightAxis.setEnabled(false);
+        rightAxis.setDrawGridLines(false);
+        rightAxis.setTypeface(face);
+        rightAxis.setLabelCount(8, false);
+        rightAxis.setValueFormatter(custom);
+        rightAxis.setSpaceTop(15f);
+        rightAxis.setAxisMinimum(0f); // this replaces setStartAtZero(true)
 
+        Legend l = mChart.getLegend();
+        l.setPosition(Legend.LegendPosition.BELOW_CHART_LEFT);
+        l.setForm(Legend.LegendForm.SQUARE);
+        l.setFormSize(9f);
+        l.setTextSize(11f);
+        l.setXEntrySpace(4f);
+        // l.setExtra(ColorTemplate.VORDIPLOM_COLORS, new String[] { "abc",
+        // "def", "ghj", "ikl", "mno" });
+        // l.setCustom(ColorTemplate.VORDIPLOM_COLORS, new String[] { "abc",
+        // "def", "ghj", "ikl", "mno" });
 
-        mBarChart.setExtraBottomOffset(5);
+        XYMarkerView mv = new XYMarkerView(this, xAxisFormatter);
+        mv.setChartView(mChart); // For bounds control
+        mChart.setMarker(mv); // Set the marker to the chart
 
-//        mBarChart.setExtraLeftOffset(30);
-//
-//        mBarChart.setExtraRightOffset(100);
+        mChart.setExtraBottomOffset(5);
 
-//        mBarChart.setMinOffset(30); // 设置padding
+        setData(30, 1000000);
 
-//        mBarChart.setViewPortOffsets(30, 0, 0, 0);
-
-
-        XAxis mXAxis = mBarChart.getXAxis();
-        mXAxis.setEnabled(true); //是否启用轴，如果禁用，关于轴的设置所有属性都将被忽略
-        mXAxis.setDrawLabels(true); //是否绘制标签
-        mXAxis.setTextSize(18);
-        mXAxis.setTextColor(getResources().getColor(R.color.color_54657e));
-        Typeface face = Typeface.createFromAsset(getAssets(), "roboto.ttf");
-        mXAxis.setTypeface(face); // 设置标签字体
-        mXAxis.setLabelCount(showCount);// 设置可见标签个数
-        mXAxis.setPosition(XAxis.XAxisPosition.BOTTOM); //设置标签显示位置
-        mXAxis.setDrawAxisLine(false);// 是否绘制轴线
-        mXAxis.setDrawGridLines(false);//是否和网格轴线
     }
 
 
     private void setData(int count, float range) {
 
-        float start = 1f;
+        float start = 0f;
 
-        mBarChart.getXAxis().setAxisMinimum(start);
-        mBarChart.getXAxis().setAxisMaximum(count + 1);
+        mChart.getXAxis().setAxisMinimum(start);
+        mChart.getXAxis().setAxisMaximum(start + count + 1);
+
         ArrayList<BarEntry> yVals1 = new ArrayList<>();
 
-        for (int i = (int) start; i < count + 2; i++) {
+        for (int i = (int) start; i < start + count; i++) {
             float mult = (range + 1);
             float val = (float) (Math.random() * mult);
-            yVals1.add(new BarEntry(i, val));
+            yVals1.add(new BarEntry(i + 1f, val));
         }
 
         BarDataSet set1;
 
-        if (mBarChart.getData() != null &&
-                mBarChart.getData().getDataSetCount() > 0) {
-            set1 = (BarDataSet) mBarChart.getData().getDataSetByIndex(0);
+        if (mChart.getData() != null &&
+                mChart.getData().getDataSetCount() > 0) {
+            set1 = (BarDataSet) mChart.getData().getDataSetByIndex(0);
             set1.setValues(yVals1);
-            mBarChart.getData().notifyDataChanged();
-            mBarChart.notifyDataSetChanged();
+            mChart.getData().notifyDataChanged();
+            mChart.notifyDataSetChanged();
         } else {
             set1 = new BarDataSet(yVals1, "The year 2017");
             set1.setColors(ColorTemplate.MATERIAL_COLORS);
@@ -122,11 +155,27 @@ public class MainActivity extends AppCompatActivity {
             dataSets.add(set1);
 
             BarData data = new BarData(dataSets);
-            data.setValueTextSize(0.8f);
-//            data.setValueTypeface(mTfLight);
+            data.setValueTextSize(10f);
+            data.setValueTypeface(face);
             data.setBarWidth(0.7f);
-            mBarChart.setData(data);
+            mChart.setData(data);
+
+            mChart.setVisibleXRange(0, showCount);// 设置标签范围
+
+            for (IDataSet set : mChart.getData().getDataSets())
+                set.setDrawValues(false);
+
+            mChart.animateY(3000);
         }
+    }
+
+    @Override
+    public void onValueSelected(Entry e, Highlight h) {
+
+    }
+
+    @Override
+    public void onNothingSelected() {
 
     }
 }

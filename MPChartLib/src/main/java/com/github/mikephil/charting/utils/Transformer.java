@@ -79,7 +79,7 @@ public class Transformer {
         if (!inverted) {
             System.out.println("mViewPortHandler.offsetBottom() = " + (mViewPortHandler.getChartHeight() - mViewPortHandler.offsetBottom()));
 
-            mMatrixOffset.postTranslate(120, 707);
+            mMatrixOffset.postTranslate(mViewPortHandler.offsetLeft(), mViewPortHandler.getChartHeight() - mViewPortHandler.offsetBottom());
         } else {
             mMatrixOffset.setTranslate(mViewPortHandler.offsetLeft(), -mViewPortHandler.offsetTop());
             mMatrixOffset.postScale(1.0f, -1.0f);
