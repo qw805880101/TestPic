@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.zhy.autolayout.AutoLinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:background="#fff"
+              android:orientation="vertical">
+
+
+    <com.github.mikephil.charting.charts.BarChart
+
+        android:id="@+id/my"
+        android:layout_width="match_parent"
+        android:layout_height="600px"/>
+
+
+</com.zhy.autolayout.AutoLinearLayout>

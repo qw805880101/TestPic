@@ -15,13 +15,14 @@ import android.widget.OverScroller;
 import com.tubb.smrv.listener.SwipeFractionListener;
 import com.tubb.smrv.listener.SwipeSwitchListener;
 import com.tubb.smrv.swiper.Swiper;
+import com.zhy.autolayout.AutoFrameLayout;
 
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.text.NumberFormat;
 import java.util.Locale;
 
-public abstract class SwipeMenuLayout extends FrameLayout {
+public abstract class SwipeMenuLayout extends AutoFrameLayout {
 
     public static final String TAG = "sml";
     public static final int DEFAULT_SCROLLER_DURATION = 250;
